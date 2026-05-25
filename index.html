@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRAHMO India Legal - AI Drafting Workbench Demo</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: ['selector', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            brandBlue: {
+              DEFAULT: '#3b82f6',
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+            },
+            brandPurple: {
+              DEFAULT: '#8b5cf6',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+            },
+            slate: {
+              950: "#060813",
+            }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ─── THEME VARIABLES ─────────────────────────────────── */
+    :root {
+      --bg-page:       #f1f5f9;
+      --bg-panel:      #ffffff;
+      --bg-panel-alt:  #f8fafc;
+      --bg-input:      #f1f5f9;
+      --bg-header:     rgba(255,255,255,0.85);
+      --border-color:  rgba(0,0,0,0.08);
+      --text-primary:  #0f172a;
+      --text-secondary:#475569;
+      --text-muted:    #94a3b8;
+      --text-area-bg:  #f8fafc;
+      --scrollbar-thumb: #cbd5e1;
+      --scrollbar-track: #f1f5f9;
+      --premium-bg:    linear-gradient(135deg, #f8f5ff 0%, #eef2ff 100%);
+      --select-bg:     #f1f5f9;
+      --btn-glass-bg:  rgba(99,102,241,0.08);
+      --btn-glass-border: rgba(99,102,241,0.2);
+      --shadow-panel:  0 2px 20px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --bg-page:       #060813;
+      --bg-panel:      rgba(15,18,35,0.85);
+      --bg-panel-alt:  rgba(10,13,28,0.5);
+      --bg-input:      rgba(6,8,19,0.6);
+      --bg-header:     rgba(6,8,19,0.85);
+      --border-color:  rgba(255,255,255,0.06);
+      --text-primary:  #f1f5f9;
+      --text-secondary:#94a3b8;
+      --text-muted:    #475569;
+      --text-area-bg:  rgba(6,8,19,0.4);
+      --scrollbar-thumb: #334155;
+      --scrollbar-track: #0f172a;
+      --premium-bg:    linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(30,27,75,0.3) 100%);
+      --select-bg:     #060813;
+      --btn-glass-bg:  rgba(99,102,241,0.08);
+      --btn-glass-border: rgba(99,102,241,0.2);
+      --shadow-panel:  0 4px 32px rgba(0,0,0,0.4);
+    }
+
+    /* ─── BASE ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; transition: background-color 0.25s, color 0.25s, border-color 0.25s; }
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Poppins', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HEADER ──────────────────────────────────────────── */
+    .header-blur {
+      background: var(--bg-header);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* ─── GLASS PANEL ─────────────────────────────────────── */
+    .glass-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* ─── GRADIENTS / DECORATIVE ──────────────────────────── */
+    .gradient-text-blue-purple {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.2);
+      color: #a78bfa;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .06em;
+    }
+
+    /* ─── BUTTONS ─────────────────────────────────────────── */
+    .btn-glass {
+      background: var(--btn-glass-bg);
+      border: 1px solid var(--btn-glass-border);
+      cursor: pointer;
+    }
+    .btn-glass:hover { background: rgba(99,102,241,0.14); }
+
+    .btn-gradient {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-gradient:hover { opacity: .92; transform: translateY(-1px); }
+
+    /* ─── THEME TOGGLE BUTTON ─────────────────────────────── */
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .2s;
+      font-family: 'Poppins', sans-serif;
+    }
+    .theme-toggle-btn:hover { border-color: rgba(139,92,246,0.4); color: #a78bfa; }
+
+    /* ─── FORM CONTROLS ───────────────────────────────────── */
+    .custom-select, select {
+      background-color: var(--select-bg);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .custom-textarea, textarea {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+      resize: none;
+    }
+    .custom-textarea::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ─── TEXT AREA VIEWER ────────────────────────────────── */
+    .text-area-viewer {
+      background: var(--text-area-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+    }
+    [data-theme="dark"] .level3-viewer {
+      background: rgba(139,92,246,0.04);
+      border-color: rgba(139,92,246,0.12);
+    }
+
+    /* ─── PREMIUM PANEL ───────────────────────────────────── */
+    .premium-glow-panel {
+      background: var(--premium-bg);
+      border-left: 1px solid var(--border-color);
+    }
+
+    /* ─── SCROLLBAR ───────────────────────────────────────── */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+
+    /* ─── FADE IN ─────────────────────────────────────────── */
+    .fade-in { animation: fadeIn .35s ease both; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+    /* ─── LIGHT MODE OVERRIDES ────────────────────────────── */
+    [data-theme="light"] .text-slate-100 { color: #0f172a !important; }
+    [data-theme="light"] .text-slate-200 { color: #1e293b !important; }
+    [data-theme="light"] .text-slate-300 { color: #334155 !important; }
+    [data-theme="light"] .text-slate-400 { color: #64748b !important; }
+    [data-theme="light"] .text-slate-500 { color: #94a3b8 !important; }
+    [data-theme="light"] .text-slate-600 { color: #cbd5e1 !important; }
+    [data-theme="light"] .bg-slate-900\/40, [data-theme="light"] .bg-slate-900\/60 { background: rgba(241,245,249,0.8) !important; }
+    [data-theme="light"] .bg-slate-950\/60 { background: rgba(248,250,252,0.9) !important; }
+    [data-theme="light"] .bg-slate-950\/50 { background: rgba(248,250,252,0.7) !important; }
+    [data-theme="light"] .bg-slate-950\/80 { background: rgba(248,250,252,0.95) !important; }
+    [data-theme="light"] .bg-slate-950 { background: #f8fafc !important; }
+    [data-theme="light"] .border-slate-800, [data-theme="light"] .border-slate-900, [data-theme="light"] .border-slate-800\/80 { border-color: rgba(0,0,0,0.08) !important; }
+    [data-theme="light"] .divide-slate-900 { --tw-divide-opacity: 1; border-color: rgba(0,0,0,0.06) !important; }
+    [data-theme="light"] .border-slate-900\/60 { border-color: rgba(0,0,0,0.06) !important; }
+    [data-theme="light"] .text-white { color: #0f172a !important; }
+    [data-theme="light"] body { background: var(--bg-page); }
+    [data-theme="light"] .bg-slate-950\/10 { background: rgba(248,250,252,0.5) !important; }
+    [data-theme="light"] .border-t.border-slate-900\/60 { border-color: rgba(0,0,0,0.06) !important; }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    .site-footer {
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-panel);
+      padding: 20px 24px;
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-top-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 12px;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: #a78bfa; }
+    .footer-divider {
+      height: 1px;
+      background: var(--border-color);
+    }
+    .footer-dev-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .footer-dev-name {
+      color: #a78bfa;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+    .footer-dot {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3b82f6;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased text-slate-100">
+
+  <!-- ══════════════════════════════════════════════
+       HEADER / NAVBAR
+  ══════════════════════════════════════════════ -->
+  <header class="header-blur sticky top-0 z-50 py-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-gradient-to-br from-brandBlue to-brandPurple rounded-xl text-slate-950 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+        <i data-lucide="scale" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight flex items-center gap-1.5">
+          <span>BRAHMO</span>
+          <span class="gradient-text-blue-purple font-normal">India Legal</span>
+        </h1>
+        <p class="text-xs text-slate-400 font-medium">Option C: Criminal + Corporate AI Drafting Workbench</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- ── THEME TOGGLE ── -->
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
+        <i data-lucide="sun" class="w-3.5 h-3.5" id="theme-icon-sun"></i>
+        <i data-lucide="moon" class="w-3.5 h-3.5 hidden" id="theme-icon-moon"></i>
+        <span id="theme-btn-label">Light Mode</span>
+      </button>
+
+      <!-- ── ACTIVE MATTER SELECTOR ── -->
+      <div class="flex items-center gap-3 bg-slate-900/40 p-1.5 rounded-xl border border-slate-800/80 self-start sm:self-auto shadow-inner">
+        <span class="text-xs text-slate-400 font-medium px-2 flex items-center gap-1.5 shrink-0">
+          <i data-lucide="folder-kanban" class="w-4 h-4 text-purple-400"></i> Active Case:
+        </span>
+        <select id="matter-select" onchange="changeMatter(this.value)" class="bg-slate-950 border border-slate-800/80 text-xs font-semibold py-1.5 px-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer custom-select text-slate-200">
+          <option value="M001">Vikram Malhotra v. State (Criminal - 420/120B)</option>
+          <option value="M002">Astroum Tech v. Zenith Holdings (Corporate - SHA Default)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       HERO SECTION
+  ══════════════════════════════════════════════ -->
+  <section class="px-6 pt-6">
+    <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col gap-1.5 relative z-10">
+        <div class="flex items-center gap-2">
+          <span class="hero-badge text-[10px] uppercase tracking-wider">
+            <i data-lucide="shield" class="w-3 h-3 text-purple-400"></i> Advanced Drafting Workspace
+          </span>
+          <span class="text-[10px] bg-slate-950/80 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Sandbox
+          </span>
+        </div>
+        <h2 class="text-lg md:text-xl font-bold tracking-tight text-white mt-1">
+          Indian Kanoon Integration & Statutory Normalizer
+        </h2>
+        <p class="text-xs text-slate-400 max-w-2xl">
+          Evaluate legal draft alignment across three distinct architectural depths. Compare generic outputs, standard formats, and target context-injected, precedent-aware drafting models.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 bg-slate-950/50 px-4 py-3 rounded-xl border border-slate-900/60 shadow-inner relative z-10 shrink-0">
+        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400">
+          <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Knowledge Engine</span>
+          <span class="text-xs text-white font-medium">BNS + BNSS Codified</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN DASHBOARD
+  ══════════════════════════════════════════════ -->
+  <main class="flex-1 p-6 grid grid-cols-1 xl:grid-cols-4 gap-6">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="xl:col-span-1 flex flex-col gap-6">
+
+      <!-- Query Analyzer -->
+      <div class="glass-panel p-5 rounded-2xl flex flex-col gap-4 shadow-xl">
+        <div class="flex justify-between items-center border-b border-slate-900 pb-3">
+          <h3 class="text-xs font-bold tracking-wider text-purple-400 uppercase flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-brandBlue"></i> 1. Query Analyzer
+          </h3>
+          <span class="text-[9px] bg-brandBlue/10 text-brandBlue px-2 py-0.5 rounded border border-brandBlue/20 font-semibold">Auto-Detect</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-xs text-slate-400 font-medium">Explain facts or request draft:</label>
+          <textarea id="query-input" class="w-full h-32 bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs focus:ring-2 focus:ring-purple-500/40 focus:outline-none text-slate-200 leading-relaxed font-sans custom-textarea" placeholder="Describe the dispute or citation..."></textarea>
+        </div>
+
+        <button onclick="runClassification()" class="w-full py-2.5 btn-glass text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+          <span id="classify-btn-content" class="flex items-center gap-2">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-purple-400"></i>
+            Analyze & Auto-Classify
+          </span>
+        </button>
+
+        <div id="class-results" class="hidden bg-slate-950/60 border border-slate-800 p-4 rounded-xl flex flex-col gap-3 fade-in">
+          <div class="text-[10px] text-purple-400 font-bold tracking-wider uppercase">Detected Parameters:</div>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-[10px] text-slate-500 block font-semibold">Practice Area</span>
+              <span id="class-area" class="font-bold text-slate-200">Criminal</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-500 block font-semibold">Document Type</span>
+              <span id="class-doc" class="font-bold text-slate-200">Bail Petition</span>
+            </div>
+            <div class="col-span-2 pt-2 border-t border-slate-900 mt-1 flex justify-between items-center">
+              <div>
+                <span class="text-[10px] text-slate-500 block font-semibold">Court Category</span>
+                <span id="class-court" class="font-bold text-slate-200">Sessions Court</span>
+              </div>
+              <span class="bg-purple-500/10 text-purple-300 text-[9px] font-bold px-2 py-0.5 rounded border border-purple-500/20">Rule Engine</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Config & Generate -->
+      <div class="glass-panel p-5 rounded-2xl flex flex-col gap-4 shadow-xl">
+        <h3 class="text-xs font-bold tracking-wider text-purple-400 uppercase flex items-center gap-2 border-b border-slate-900 pb-3">
+          <i data-lucide="file-text" class="w-4 h-4 text-brandBlue"></i> 2. Manual Config Overrides
+        </h3>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-xs text-slate-400 font-medium">Select Template:</label>
+          <select id="template-select" class="w-full bg-slate-950/60 border border-slate-800 text-xs py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer text-slate-200 custom-select"></select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-xs text-slate-400 font-medium">Court Formats:</label>
+          <select id="court-select" class="w-full bg-slate-950/60 border border-slate-800 text-xs py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 cursor-pointer text-slate-200 custom-select">
+            <option value="SESSIONS">Sessions Court (SESSIONS)</option>
+            <option value="HC">High Court (HC)</option>
+            <option value="SC">Supreme Court (SC)</option>
+            <option value="NCLT">Company Law Tribunal (NCLT)</option>
+          </select>
+        </div>
+
+        <button onclick="generateDrafts()" class="w-full py-3 btn-gradient text-slate-950 rounded-xl text-xs font-bold flex items-center justify-center gap-2 mt-2 transition-all">
+          <span id="generate-btn-content" class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-slate-950"></i>
+            Evaluate & Generate Drafts
+          </span>
+        </button>
+      </div>
+
+      <!-- Statutory Alerts -->
+      <div id="statutory-alerts-panel" class="hidden glass-panel p-5 rounded-2xl border-amber-500/20 bg-amber-500/5 flex flex-col gap-3 shadow-xl fade-in">
+        <div class="flex items-center gap-2 text-amber-400">
+          <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">Statutory Penal Alerts</h4>
+        </div>
+        <div id="alerts-list" class="flex flex-col gap-2.5 max-h-56 overflow-y-auto pr-1 custom-scrollbar"></div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT PANEL ── -->
+    <div class="xl:col-span-3 flex flex-col gap-6">
+
+      <!-- Comparison Container -->
+      <div class="glass-panel rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-slate-905">
+
+        <div class="bg-slate-950/50 p-4 border-b border-slate-900 flex justify-between items-center">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="arrow-right-left" class="w-4 h-4 text-purple-400"></i>
+            <h2 class="text-sm font-semibold text-slate-200">Three-Level Comparative Workbench</h2>
+          </div>
+          <span id="engine-status" class="text-[10px] text-slate-500 font-medium">Status: Idle</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-900 min-h-[500px]">
+
+          <!-- LEVEL 1 -->
+          <div class="p-5 flex flex-col gap-4">
+            <div class="flex justify-between items-start border-b border-slate-900 pb-3">
+              <div>
+                <span class="text-[9px] bg-slate-950 text-slate-400 font-bold px-2 py-0.5 rounded border border-slate-800">LEVEL 1</span>
+                <h3 class="text-xs font-bold text-slate-300 mt-1">Generic AI Output</h3>
+              </div>
+              <div id="l1-score-wrapper" class="hidden flex flex-col items-end">
+                <span class="text-[9px] text-slate-500 block font-semibold uppercase tracking-wider mb-1">Score</span>
+                <span id="l1-score" class="text-xs font-bold text-rose-500 px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 rounded-md">45%</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-3 justify-center">
+              <div id="l1-empty" class="text-center py-12 text-slate-600 text-xs italic">Click Generate to start</div>
+              <div id="l1-text" class="hidden text-area-viewer p-4 text-[11px] leading-relaxed text-slate-400 h-[380px] overflow-y-auto whitespace-pre-wrap custom-scrollbar"></div>
+              <div id="l1-rules" class="hidden flex flex-col gap-2">
+                <span class="text-[10px] text-slate-400 font-semibold">Rules Failed:</span>
+                <div id="l1-rules-list" class="flex flex-wrap gap-1"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEVEL 2 -->
+          <div class="p-5 flex flex-col gap-4 bg-slate-950/10">
+            <div class="flex justify-between items-start border-b border-slate-900 pb-3">
+              <div>
+                <span class="text-[9px] bg-slate-950 text-slate-400 font-bold px-2 py-0.5 rounded border border-slate-800">LEVEL 2</span>
+                <h3 class="text-xs font-bold text-slate-300 mt-1">Template Format Only</h3>
+              </div>
+              <div id="l2-score-wrapper" class="hidden flex flex-col items-end">
+                <span class="text-[9px] text-slate-500 block font-semibold uppercase tracking-wider mb-1">Score</span>
+                <span id="l2-score" class="text-xs font-bold text-amber-500 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-md">70%</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-3 justify-center">
+              <div id="l2-empty" class="text-center py-12 text-slate-600 text-xs italic">Click Generate to start</div>
+              <div id="l2-text" class="hidden text-area-viewer p-4 text-[11px] leading-relaxed text-slate-300 h-[380px] overflow-y-auto whitespace-pre-wrap custom-scrollbar"></div>
+              <div id="l2-rules" class="hidden flex flex-col gap-2">
+                <span class="text-[10px] text-slate-400 font-semibold">Assessment Rules:</span>
+                <div id="l2-rules-list" class="flex flex-wrap gap-1"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEVEL 3 -->
+          <div class="p-5 flex flex-col gap-4 premium-glow-panel rounded-r-2xl">
+            <div class="flex justify-between items-start border-b border-slate-900/60 pb-3">
+              <div>
+                <span class="text-[9px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded border border-purple-500/30">LEVEL 3</span>
+                <h3 class="text-xs font-bold text-white mt-1 flex items-center gap-1.5">
+                  Full Knowledge & Research
+                  <i data-lucide="award" class="w-3.5 h-3.5 text-purple-400"></i>
+                </h3>
+              </div>
+              <div id="l3-score-wrapper" class="hidden flex flex-col items-end">
+                <span class="text-[9px] text-purple-400 block font-bold uppercase tracking-wider mb-1">Score</span>
+                <span id="l3-score" class="text-xs font-bold text-emerald-400 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md">95%</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-3 justify-center">
+              <div id="l3-empty" class="text-center py-12 text-slate-600 text-xs italic">Click Generate to start</div>
+              <div id="l3-text" class="hidden text-area-viewer level3-viewer p-4 text-[11.5px] leading-relaxed text-slate-200 h-[380px] overflow-y-auto whitespace-pre-wrap custom-scrollbar"></div>
+              <div id="l3-details" class="hidden flex flex-col gap-2.5">
+                <div>
+                  <span class="text-[10px] text-slate-400 font-semibold block mb-1">Passed Standards:</span>
+                  <div id="l3-rules-list" class="flex flex-wrap gap-1"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 border-t border-slate-900/60 pt-2.5">
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-semibold block mb-1">Injected Facts & Rules</span>
+                    <div id="l3-injected-nodes" class="flex flex-col gap-1 mt-1"></div>
+                  </div>
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-semibold block mb-1">Verified Citations</span>
+                    <div id="l3-legal-refs" class="flex flex-col gap-1 mt-1 text-purple-400 font-medium"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Lower Index -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Kanoon Logs -->
+        <div class="glass-panel p-5 rounded-2xl flex flex-col gap-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-900 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="book-open" class="w-4 h-4 text-purple-400"></i>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Indian Kanoon API Cache Logs</h3>
+            </div>
+            <span id="cache-count" class="text-[9px] text-slate-400 font-bold px-2.5 py-0.5 rounded-full bg-slate-950 border border-slate-800">0 Cases Cached</span>
+          </div>
+          <div class="flex gap-2 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+            <input id="research-query-input" type="text" placeholder="Query Indian Kanoon..." class="flex-1 bg-transparent border-0 rounded-lg p-2 text-xs text-slate-300 focus:outline-none focus:ring-0" style="color: var(--text-primary);">
+            <button onclick="searchManualKanoon()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs py-2 px-4 rounded-lg transition-all shadow-lg shadow-purple-500/10">Search</button>
+          </div>
+          <div id="kanoon-cache-list" class="flex flex-col gap-2.5 max-h-44 overflow-y-auto pr-1 custom-scrollbar">
+            <span class="text-xs text-slate-600 italic py-4 text-center">No cases currently cached. Try running a draft generation.</span>
+          </div>
+        </div>
+
+        <!-- Knowledge Index -->
+        <div class="glass-panel p-5 rounded-2xl flex flex-col gap-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-900 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Matter Knowledge Node Index</h3>
+            </div>
+            <span id="knowledge-badge" class="text-[9px] text-slate-400 font-bold px-2.5 py-0.5 rounded-full bg-slate-950 border border-slate-800">Criminal Law</span>
+          </div>
+          <div id="knowledge-nodes-list" class="flex flex-col gap-2.5 max-h-44 overflow-y-auto pr-1 custom-scrollbar"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top-row">
+        <span>BRAHMO India Legal Platform &copy; 2026. Custom designed with active Next.js App Router API nodes.</span>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <span>&bull;</span>
+          <a href="#">Terms of Service</a>
+          <span>&bull;</span>
+          <a href="#">API Logs</a>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-dev-row">
+        <span>Designed &amp; Developed by</span>
+        <span class="footer-dev-name">Sarathkumar</span>
+        <span class="footer-dot"></span>
+        <span>Software Developer</span>
+        <span class="footer-dot"></span>
+        <span>2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════
+       BUSINESS LOGIC
+  ══════════════════════════════════════════════ -->
+  <script>
+    /* ── THEME TOGGLE ────────────────────────────────────── */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn-label').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('theme-icon-sun').classList.toggle('hidden', !isDark);
+      document.getElementById('theme-icon-moon').classList.toggle('hidden', isDark);
+    }
+
+    /* ── DATA ────────────────────────────────────────────── */
+    const TEMPLATES = [
+      {
+        id: "t1", template_id: "criminal_bail_sessions", practice_area: "Criminal",
+        display_name: "Anticipatory Bail Petition (BNSS 482)", court_code: "SESSIONS",
+        auto_research_query: "Anticipatory Bail Section 482 BNSS quashing",
+        checks: [
+          { id: "chk_header", rule: "Contains standard court header styling", weight: 20 },
+          { id: "chk_bns_conv", rule: "Correctly references BNS/BNSS instead of IPC/CrPC", weight: 30 },
+          { id: "chk_precedent", rule: "Integrates landmark quashing or bail judgments", weight: 25 },
+          { id: "chk_pray", rule: "Concludes with standard legal prayer and signature block", weight: 25 }
+        ]
+      },
+      {
+        id: "t2", template_id: "corporate_arbitration_invoke", practice_area: "Corporate",
+        display_name: "Arbitration Clause Invoke Notice", court_code: "HC",
+        auto_research_query: "Notice invoking arbitration Section 21",
+        checks: [
+          { id: "chk_header", rule: "Notice contains sender and recipient addresses", weight: 20 },
+          { id: "chk_sec21", rule: "Explicitly references Section 21 invocation", weight: 30 },
+          { id: "chk_nominee", rule: "Proposes a sole arbitrator and sets 30-day timeline", weight: 30 },
+          { id: "chk_close", rule: "Signed by legal counsel on behalf of claimant", weight: 20 }
+        ]
+      },
+      {
+        id: "t3", template_id: "cheque_bounce_138", practice_area: "Criminal",
+        display_name: "Section 138 NI Act Legal Notice", court_code: "SESSIONS",
+        auto_research_query: "Section 138 NI Act cheque dishonour",
+        checks: [
+          { id: "chk_header", rule: "Contains addressee details", weight: 20 },
+          { id: "chk_timeline", rule: "Includes mandatory 15-day statutory demand timeline", weight: 30 },
+          { id: "chk_chequedetails", rule: "Includes cheque details and bounce memo date", weight: 30 },
+          { id: "chk_liability", rule: "Asserts legally enforceable debt liability", weight: 20 }
+        ]
+      }
+    ];
+
+    const KNOWLEDGE_NODES = {
+      "M001": [
+        { type: "Client Fact", title: "FIR Registry Details", content: "FIR No. 120/2026 was filed on May 10, 2026, at Patiala House Police Station under Section 420 and Section 120B of the IPC by Rajiv Mehta against Vikram Malhotra." },
+        { type: "Client Fact", title: "Business Rivalry Origin", content: "The complainant Rajiv Mehta and applicant Vikram Malhotra were equal shareholders in Astroum Tech. The dispute arose following a board deadlock regarding equity transfer on April 15, 2026." },
+        { type: "Constraint", title: "Roots in Society Assertion", content: "The petition must assert that the applicant is a respectable business director of Astroum Tech, has a permanent residence at Vasant Kunj, New Delhi, holds bank accounts and assets in India, and poses zero flight risk." },
+        { type: "Anti Pattern", title: "No Liability Admission", content: "Do not mention any mutual settlement agreements or willingness to pay back any disputed amounts in the bail application, as this is often construed by prosecutors as an admission of corporate fraud." }
+      ],
+      "M002": [
+        { type: "Client Fact", title: "Shareholders Agreement Clause 18.2", content: "Client Astroum Tech entered into a Shareholders Agreement (SHA) with Zenith Holdings on October 12, 2024. Clause 18.2 specifies that all disputes arising out of the agreement shall be referred to arbitration in New Delhi." },
+        { type: "Constraint", title: "Explicit Dispute Trigger", content: "Clearly specify that the dispute arose due to Zenith Holdings failing to pay the licensing fee of INR 45,00,000 due under Clause 6.1 on March 1, 2026, despite multiple written reminders." },
+        { type: "Anti Pattern", title: "No Forgiveness of Interest", content: "Do not waive or forget to claim the 18% per annum compound interest rate on the unpaid licensing fee, as specified in Schedule C." }
+      ]
+    };
+
+    const LANDMARK_CASES = {
+      "criminal": [
+        { title: "State of Haryana v. Bhajan Lal (1992)", source: "Supreme Court of India", headline: "Landmark ruling on quashing of FIRs. Commercial disputes converted to criminal cases are an abuse of process." },
+        { title: "Gurbaksh Singh Sibbia v. State of Punjab (1980)", source: "Supreme Court of India", headline: "Constitution Bench ruling on Anticipatory Bail (Section 438 CrPC / 482 BNSS) establishing wide amplitude of court discretion." },
+        { title: "Arnesh Kumar v. State of Bihar (2014)", source: "Supreme Court of India", headline: "Established strict restrictions on automatic arrests for offences punishable under 7 years, requiring Section 41A notices." }
+      ],
+      "corporate": [
+        { title: "Perkins Eastman Architects DPC v. HSCC (India) Ltd (2019)", source: "Supreme Court of India", headline: "Ineligibility of an interested party to unilaterally appoint a sole arbitrator." },
+        { title: "TRF Ltd. v. Energo Engineering Projects Ltd (2017)", source: "Supreme Court of India", headline: "Detailed guidelines confirming that an ineligible arbitrator cannot nominate another sole arbitrator." }
+      ]
+    };
+
+    let activeMatterId = "M001";
+
+    /* ── INIT ───────────────────────────────────────────── */
+    window.onload = function () {
+      lucide.createIcons();
+      changeMatter("M001");
+    };
+
+    /* ── MATTER CHANGE ──────────────────────────────────── */
+    function changeMatter(matterId) {
+      activeMatterId = matterId;
+      const selectTemplate = document.getElementById("template-select");
+      selectTemplate.innerHTML = "";
+
+      const queryInput = document.getElementById("query-input");
+      const knowledgeBadge = document.getElementById("knowledge-badge");
+
+      if (matterId === "M001") {
+        queryInput.value = "Petition for anticipatory bail under 438 crpc for my client Vikram Malhotra who was accused of cheating and conspiracy by his business partner Rajiv Mehta under 420/120B IPC";
+        knowledgeBadge.innerText = "Criminal Law";
+        knowledgeBadge.className = "text-[9px] text-slate-400 font-semibold px-2 py-0.5 rounded bg-slate-900 border border-slate-800";
+        document.getElementById("court-select").value = "SESSIONS";
+        TEMPLATES.filter(t => t.practice_area === "Criminal").forEach(t => {
+          selectTemplate.innerHTML += `<option value="${t.template_id}">${t.display_name}</option>`;
+        });
+      } else {
+        queryInput.value = "Notice invoking arbitration under shareholders agreement SHA between Astroum Tech and Zenith Holdings due to default of payment of Rs. 45,00,000 licensing fee under clause 6.1";
+        knowledgeBadge.innerText = "Corporate Law";
+        knowledgeBadge.className = "text-[9px] text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/20 border border-emerald-900/30";
+        document.getElementById("court-select").value = "HC";
+        TEMPLATES.filter(t => t.practice_area === "Corporate").forEach(t => {
+          selectTemplate.innerHTML += `<option value="${t.template_id}">${t.display_name}</option>`;
+        });
+      }
+
+      const knList = document.getElementById("knowledge-nodes-list");
+      knList.innerHTML = "";
+      KNOWLEDGE_NODES[matterId].forEach(node => {
+        let badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+        if (node.type === "Constraint") badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+        else if (node.type === "Anti Pattern") badgeColor = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+        knList.innerHTML += `
+          <div class="p-2.5 bg-slate-900/40 border border-slate-900 rounded">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-slate-200">${node.title}</span>
+              <span class="text-[9px] font-semibold px-1 rounded border ${badgeColor}">${node.type}</span>
+            </div>
+            <p class="text-[10.5px] text-slate-400 leading-relaxed">${node.content}</p>
+          </div>`;
+      });
+
+      resetOutputs();
+      lucide.createIcons();
+    }
+
+    /* ── RESET ──────────────────────────────────────────── */
+    function resetOutputs() {
+      ['class-results','statutory-alerts-panel','l1-text','l2-text','l3-text','l1-rules','l2-rules','l3-details','l1-score-wrapper','l2-score-wrapper','l3-score-wrapper'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      ['l1-empty','l2-empty','l3-empty'].forEach(id => {
+        document.getElementById(id).classList.remove('hidden');
+      });
+      document.getElementById("engine-status").innerText = "Status: Idle";
+      document.getElementById("engine-status").className = "text-[10px] text-slate-500 font-medium";
+    }
+
+    /* ── CLASSIFY ───────────────────────────────────────── */
+    function runClassification() {
+      const btn = document.getElementById("classify-btn-content");
+      btn.innerHTML = `<span class="animate-spin rounded-full h-3 w-3 border-b-2 border-amber-500"></span> Classifying...`;
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="search" class="w-3.5 h-3.5 text-amber-500"></i> Analyze & Auto-Classify`;
+        const isCriminal = activeMatterId === "M001";
+        document.getElementById("class-results").classList.remove("hidden");
+        document.getElementById("class-area").innerText = isCriminal ? "Criminal" : "Corporate";
+        document.getElementById("class-doc").innerText = isCriminal ? "Bail Petition" : "Arbitration Notice";
+        document.getElementById("class-court").innerText = isCriminal ? "Sessions Court" : "High Court";
+        lucide.createIcons();
+      }, 750);
+    }
+
+    /* ── KANOON SEARCH ──────────────────────────────────── */
+    function searchManualKanoon() {
+      const q = document.getElementById("research-query-input").value;
+      if (!q) return;
+      const isCrim = q.toLowerCase().includes("bail") || q.toLowerCase().includes("fir") || q.toLowerCase().includes("420") || activeMatterId === "M001";
+      populateKanoonLogs(isCrim ? LANDMARK_CASES.criminal : LANDMARK_CASES.corporate);
+    }
+
+    function populateKanoonLogs(cases) {
+      document.getElementById("cache-count").innerText = `${cases.length} Cases Cached`;
+      const list = document.getElementById("kanoon-cache-list");
+      list.innerHTML = "";
+      cases.forEach(c => {
+        list.innerHTML += `
+          <div class="bg-slate-900/60 p-2.5 rounded border border-slate-900 text-xs">
+            <div class="flex justify-between items-start gap-2 mb-1">
+              <span class="font-bold text-slate-200">${c.title}</span>
+              <span class="bg-slate-850 text-[9px] text-slate-400 px-1 rounded shrink-0">${c.source}</span>
+            </div>
+            <p class="text-[10px] text-slate-400 leading-normal">${c.headline}</p>
+          </div>`;
+      });
+    }
+
+    /* ── GENERATE DRAFTS ────────────────────────────────── */
+    function generateDrafts() {
+      const btn = document.getElementById("generate-btn-content");
+      btn.innerHTML = `<span class="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-slate-950"></span> Generating...`;
+      document.getElementById("engine-status").innerText = "Status: Injecting Knowledge & Precedents...";
+      document.getElementById("engine-status").className = "text-[10px] text-amber-400 animate-pulse font-medium";
+
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> Evaluate & Generate Drafts`;
+        document.getElementById("engine-status").innerText = "Status: Normalizing statutory citations...";
+
+        setTimeout(() => {
+          document.getElementById("engine-status").innerText = "Status: Drafting Complete";
+          document.getElementById("engine-status").className = "text-[10px] text-emerald-400 font-semibold";
+
+          const isCriminal = activeMatterId === "M001";
+          const court = document.getElementById("court-select").value;
+
+          // Level 1
+          document.getElementById("l1-empty").classList.add("hidden");
+          document.getElementById("l1-text").classList.remove("hidden");
+          document.getElementById("l1-rules").classList.remove("hidden");
+          document.getElementById("l1-score-wrapper").classList.remove("hidden");
+          document.getElementById("l1-score").innerText = "40%";
+          document.getElementById("l1-text").innerText = generateLevel1Text(isCriminal);
+          document.getElementById("l1-rules-list").innerHTML = `
+            <span class="bg-rose-500/10 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/20 flex items-center gap-1"><i data-lucide="x-circle" class="w-2.5 h-2.5"></i> Missing Court Header</span>
+            <span class="bg-rose-500/10 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/20 flex items-center gap-1"><i data-lucide="x-circle" class="w-2.5 h-2.5"></i> Uses Outdated Act (IPC/CrPC)</span>
+            <span class="bg-rose-500/10 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/20 flex items-center gap-1"><i data-lucide="x-circle" class="w-2.5 h-2.5"></i> Lacks Verifiable Precedents</span>`;
+
+          // Level 2
+          document.getElementById("l2-empty").classList.add("hidden");
+          document.getElementById("l2-text").classList.remove("hidden");
+          document.getElementById("l2-rules").classList.remove("hidden");
+          document.getElementById("l2-score-wrapper").classList.remove("hidden");
+          document.getElementById("l2-score").innerText = "65%";
+          document.getElementById("l2-text").innerText = generateLevel2Text(isCriminal, court);
+          document.getElementById("l2-rules-list").innerHTML = `
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> Court Header Applied</span>
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> Standard Legal Prayer</span>
+            <span class="bg-rose-500/10 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/20 flex items-center gap-1"><i data-lucide="x-circle" class="w-2.5 h-2.5"></i> Lacks Enterprise Knowledge</span>
+            <span class="bg-rose-500/10 text-rose-400 text-[9px] px-1.5 py-0.5 rounded border border-rose-500/20 flex items-center gap-1"><i data-lucide="x-circle" class="w-2.5 h-2.5"></i> Missing Landmark Precedents</span>`;
+
+          // Level 3
+          document.getElementById("l3-empty").classList.add("hidden");
+          document.getElementById("l3-text").classList.remove("hidden");
+          document.getElementById("l3-details").classList.remove("hidden");
+          document.getElementById("l3-score-wrapper").classList.remove("hidden");
+          document.getElementById("l3-score").innerText = "95%";
+          document.getElementById("l3-text").innerText = generateLevel3Text(isCriminal, court);
+          document.getElementById("l3-rules-list").innerHTML = `
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> Court Header Applied</span>
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> BNS / BNSS Citations Verified</span>
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> Injected Precedents (Kanoon)</span>
+            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-2.5 h-2.5"></i> Checked for Anti-Patterns</span>`;
+
+          const injectedList = document.getElementById("l3-injected-nodes");
+          const refsList = document.getElementById("l3-legal-refs");
+          injectedList.innerHTML = "";
+          refsList.innerHTML = "";
+
+          if (isCriminal) {
+            injectedList.innerHTML = `
+              <span class="text-[9.5px] text-slate-300">⚙️ FIR Registry Details</span>
+              <span class="text-[9.5px] text-slate-300">⚙️ Roots in Society Assertion</span>
+              <span class="text-[9.5px] text-slate-300">⚙️ No Liability Admission</span>`;
+            refsList.innerHTML = `
+              <span class="text-[9.5px] text-amber-500 truncate" title="State of Haryana v. Bhajan Lal (1992)">📜 State of Haryana v. Bhajan Lal</span>
+              <span class="text-[9.5px] text-amber-500 truncate" title="Gurbaksh Singh Sibbia v. State of Punjab (1980)">📜 Gurbaksh Singh Sibbia v. State</span>`;
+          } else {
+            injectedList.innerHTML = `
+              <span class="text-[9.5px] text-slate-300">⚙️ Shareholders Agreement SHA</span>
+              <span class="text-[9.5px] text-slate-300">⚙️ Dispute Trigger</span>
+              <span class="text-[9.5px] text-slate-300">⚙️ No Forgiveness of Interest</span>`;
+            refsList.innerHTML = `
+              <span class="text-[9.5px] text-amber-500 truncate" title="Perkins Eastman Architects DPC v. HSCC (India) (2019)">📜 Perkins Eastman Architects v. HSCC</span>`;
+          }
+
+          populateKanoonLogs(isCriminal ? LANDMARK_CASES.criminal : LANDMARK_CASES.corporate);
+          populateAlerts(isCriminal);
+          lucide.createIcons();
+        }, 600);
+      }, 800);
+    }
+
+    /* ── ALERTS ─────────────────────────────────────────── */
+    function populateAlerts(isCriminal) {
+      const panel = document.getElementById("statutory-alerts-panel");
+      const list = document.getElementById("alerts-list");
+      list.innerHTML = "";
+      if (isCriminal) {
+        panel.classList.remove("hidden");
+        list.innerHTML = `
+          <div class="bg-slate-950/80 p-2.5 rounded border border-slate-800 text-[11px] leading-relaxed">
+            <span class="text-amber-400 font-bold block mb-1">Section 420 IPC → Section 318 BNS</span>
+            <span class="text-slate-300">Section 318 BNS (formerly 420 IPC) covers Cheating. The threshold for corporate cheating and sentencing rules have been updated, specifically establishing progressive penalties for recidivists.</span>
+          </div>
+          <div class="bg-slate-950/80 p-2.5 rounded border border-slate-800 text-[11px] leading-relaxed">
+            <span class="text-amber-400 font-bold block mb-1">Section 120B IPC → Section 61(2) BNS</span>
+            <span class="text-slate-300">Section 61(2) BNS (formerly 120B IPC) defines Criminal Conspiracy. Ensure any joint liability arguments are restructured under the new codification.</span>
+          </div>
+          <div class="bg-slate-950/80 p-2.5 rounded border border-slate-800 text-[11px] leading-relaxed">
+            <span class="text-amber-400 font-bold block mb-1">Section 438 CrPC → Section 482 BNSS</span>
+            <span class="text-slate-300">Section 482 BNSS (formerly 438 CrPC) governs Anticipatory Bail. The statutory guidelines have been slightly adjusted; ensure you explicitly satisfy the court regarding the lack of flight risk.</span>
+          </div>`;
+      } else {
+        panel.classList.add("hidden");
+      }
+    }
+
+    /* ── TEXT GENERATORS ────────────────────────────────── */
+    function generateLevel1Text(isCriminal) {
+      if (isCriminal) {
+        return `CRIMINAL ANTICIPATORY BAIL PETITION\n\nTo,\nThe Sessions Judge, New Delhi.\n\nThe applicant Vikram Malhotra respectfully submits that he is innocent and has been falsely accused in FIR No. 120/2026 under Section 420 IPC and Section 120B IPC.\n\n1. The applicant is an employee/director of Astroum Tech. The dispute is of a commercial nature between shareholders Rajiv Mehta and the applicant.\n2. The dispute arose over equity share transfers. Complainant Rajiv Mehta has abused the criminal justice system to file cheating charges.\n3. The applicant has full faith in the law and will cooperate with the police. He poses no flight risk.\n\nTherefore, the applicant prays that the police be directed to release him on bail in the event of arrest.\n\nSubmitted by:\nVikram Malhotra`;
+      }
+      return `ARBITRATION INVOKE NOTICE\nTo,\nZenith Holdings,\nNew Delhi.\n\nWe invoke arbitration for non-payment of licensing fees. You owe us Rs. 45,00,000 under the agreement.\nPlease agree to our arbitrator.\nRegards,\nAstroum Tech`;
+    }
+
+    function generateLevel2Text(isCriminal, court) {
+      const header = getHeaderTemplate(court);
+      const footer = getFooterTemplate(court);
+      if (isCriminal) {
+        return `${header}\n\nIN THE MATTER OF:\nVikram Malhotra\n... APPLICANT/ACCUSED\n\nVERSUS\n\nSTATE (NCT OF DELHI)\n... RESPONDENT\n\nPETITION FOR ANTICIPATORY BAIL ON BEHALF OF THE APPLICANT\n\nMost Respectfully Showeth:\n1. State that the applicant is law-abiding, a respectable citizen, and deep-rooted in the society.\n2. Outline the facts and details of the current case:\n[INSERT CLIENT DISPUTE DETAILS]\n3. Provide the statutory argument, noting that the case is registered under IPC/BNS sections. Ensure you reference the updated sections from the BNS/BNSS.\n4. Inject relevant precedent case laws:\n[INSERT RELEVANT CASE LAWS/PRECEDENTS]\n5. Address key safety constraints & anti-patterns to protect the client:\n[INSERT DRAFTING CONSTRAINTS]\n6. Pray for anticipatory bail, detailing that the applicant is willing to abide by all investigation cooperation requests and will not tamper with witnesses.\n\n${footer}`;
+      }
+      return `${header}\n\nTo,\nZenith Holdings Limited\nNew Delhi.\n\nSUBJECT: NOTICE INVOKING ARBITRATION UNDER SECTION 21 OF THE ARBITRATION AND CONCILIATION ACT, 1996\n\nDear Sirs,\n1. State the relationship between the parties based on the agreement:\n[INSERT CLIENT DISPUTE DETAILS]\n2. Define the dispute details, transaction history, and contract defaults.\n3. List the legal precedents or decisions supporting the invocation:\n[INSERT RELEVANT CASE LAWS/PRECEDENTS]\n4. Apply the strict drafting constraints:\n[INSERT DRAFTING CONSTRAINTS]\n5. Nominate a sole arbitrator and request consent within 30 days.\n\nSincerely,\nClaimant Counsel`;
+    }
+
+    function generateLevel3Text(isCriminal, court) {
+      const header = getHeaderTemplate(court);
+      const footer = getFooterTemplate(court);
+      if (isCriminal) {
+        return `${header}\n\nIN THE MATTER OF:\nVikram Malhotra\n... APPLICANT/ACCUSED\n\nVERSUS\n\nSTATE (NCT OF DELHI)\n... RESPONDENT\n\nAPPLICATION FOR ANTICIPATORY BAIL UNDER SECTION 482 OF THE BHARATIYA NAGARIK SURAKSHA SANHITA, 2023 (FORMERLY SECTION 438 OF THE CODE OF CRIMINAL PROCEDURE, 1973)\n\nMOST RESPECTFULLY SHOWETH:\n\n1. That the Applicant is a law-abiding, respectable citizen and business director of Astroum Tech, residing at Vasant Kunj, New Delhi. The Applicant is deep-rooted in the society and poses zero flight risk.\n\n2. DETAILS OF ACCUSATION:\n   The complainant Rajiv Mehta has filed a false FIR No. 120/2026 on May 10, 2026, at Patiala House Police Station under Section 318 of the BNS (formerly Section 420 IPC) and Section 61(2) of the BNS (formerly Section 120B IPC).\n\n3. COMMERCIAL NATURE OF DISPUTE:\n   The complainant Rajiv Mehta and applicant Vikram Malhotra were equal shareholders in Astroum Tech. The dispute arose following a board deadlock regarding equity transfer on April 15, 2026. Rajiv Mehta threatened to file criminal actions if Vikram Malhotra did not transfer his shares for free.\n\n4. DRAFTING CONSTRAINTS & WARNINGS:\n   - The applicant is a respectable director, has a permanent residence, and holds assets in India.\n   - The applicant denies all cheating allegations. There is no admission of liability, no acknowledgment of mutual settlement discussions, and no willingness to pay disputed amounts as it was a purely civil deadlock.\n\n5. LEGAL PRECEDENTS & LANDMARK DECISIONS:\n   - In State of Haryana v. Bhajan Lal (1992), the Supreme Court ruled that criminal proceedings motivated by private malice and commercial dispute should be quashed.\n   - In Gurbaksh Singh Sibbia v. State of Punjab (1980), the Constitution Bench held that the power of anticipatory bail (now under Section 482 BNSS) is wide and must protect individual liberty.\n\n6. PRAYER:\n   It is therefore most respectfully prayed that in the event of arrest in connection with FIR No. 120/2026, the applicant be released on bail.\n\n${footer}`;
+      }
+      return `${header}\n\nBY REGISTERED POST A.D. & EMAIL\nTo,\nZenith Holdings Limited\nNew Delhi.\n\nSUBJECT: NOTICE INVOKING ARBITRATION UNDER SECTION 21 OF THE ARBITRATION AND CONCILIATION ACT, 1996\n\nDear Sirs,\n\nUnder instructions from our client Astroum Tech, we serve you notice:\n1. AGREEMENT DETAILS:\n   Client Astroum Tech entered into a Shareholders Agreement (SHA) with Zenith Holdings on October 12, 2024. Clause 18.2 specifies that all disputes arising out of the agreement shall be referred to arbitration in New Delhi.\n\n2. TRANSACTIONS & DEFAULT:\n   The dispute arose due to Zenith Holdings failing to pay the licensing fee of INR 45,00,000 due under Clause 6.1 on March 1, 2026, despite multiple written reminders.\n   We claim the principal amount along with interest at 18% per annum compound rate as specified in Schedule C.\n\n3. PRECEDENTS & ARBITRATOR PROPOSAL:\n   - In Perkins Eastman Architects DPC v. HSCC (India) Ltd (2019), the Supreme Court held that a party having an interest in the outcome of the dispute cannot unilaterally appoint a sole arbitrator.\n   - We propose Mr. Justice (Retd.) A. K. Sikri to act as sole arbitrator and request your consent within 30 days.\n\n${footer}`;
+    }
+
+    function getHeaderTemplate(court) {
+      if (court === "SC") return "IN THE SUPREME COURT OF INDIA\nCRIMINAL ORIGINAL JURISDICTION\nSPECIAL LEAVE PETITION NO. _____ OF 2026";
+      if (court === "HC") return "IN THE HIGH COURT OF DELHI AT NEW DELHI\n(CRIMINAL APPELLATE / ORIGINAL JURISDICTION)\nCRL.M.C. / CRL.A. NO. _____ OF 2026";
+      if (court === "NCLT") return "BEFORE THE NATIONAL COMPANY LAW TRIBUNAL,\nPRINCIPAL BENCH AT NEW DELHI\nCOMPANY PETITION NO. _____ OF 2026";
+      return "IN THE COURT OF THE DISTRICT & SESSIONS JUDGE, PATIALA HOUSE COURTS, NEW DELHI\nBAIL APPLICATION NO. _____ OF 2026";
+    }
+
+    function getFooterTemplate(court) {
+      if (court === "SC") return "AND FOR THIS ACT OF KINDNESS, THE PETITIONER SHALL AS IN DUTY BOUND EVER PRAY.\nFILED BY:\n___________________\nADVOCATE FOR THE PETITIONER\nNEW DELHI";
+      if (court === "HC") return "PETITIONER THROUGH ADVOCATE\n___________________\nADVOCATE ON RECORD\nPLACE: NEW DELHI";
+      if (court === "NCLT") return "PETITIONER THROUGH COUNSEL\n___________________\nADVOCATE FOR THE PETITIONER\nNEW DELHI";
+      return "APPLICANT THROUGH COUNSEL\n___________________\nADVOCATE FOR THE APPLICANT\nNEW DELHI";
+    }
+  </script>
+</body>
+</html>
